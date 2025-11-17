@@ -26,6 +26,13 @@ jobs:
         run: |
           curl -s https://storage.yandex-cloud.net/yandexcloud-yc/install.sh | bash
           echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
+          
+          sleep 5
+          
+      - name: Verify YC installation
+        run: |
+          which yc
+          yc --version
 
       - name: Configure YC CLI
         run: |
