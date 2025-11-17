@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - master
+
 jobs:
   build:
     name: Autograding
@@ -21,13 +22,61 @@ jobs:
         timeout-minutes: 10
         run: docker compose build --push
 
-      # TODO deploy to k8s with liveness and readyness probes
+      - name: Configure YC CLI
+        run: |
+          yc config set token "${{ secrets.YC_OAUTH_TOKEN }}"
+          yc config set folder-id "b1g1ok9v2ph2i9k05bot"
+          yc container registry configure-docker
 
-      - name: Wait before services are ready
-        run: kubectl wait -n test -l app.kubernetes.io/name=gateway pod --for=condition=Ready --timeout 3m
-      
-      # TODO setup parameters in classroom/autograding.json
-      
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.28.0'
+
+      - name: Get kubeconfig for Yandex Cloud
+        run: yc managed-kubernetes cluster get-credentials ваш-кластер --external
+
+      - name: Create test namespace
+        run: kubectl create namespace test --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy PostgreSQL database
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
+          helm install postgresql bitnami/postgresql \
+            --namespace test \
+            --set auth.database=main_db \
+            --set auth.username=admin \
+            --set auth.password=password \
+            --set primary.persistence.enabled=false
+
+      - name: Deploy application with Helm
+        run: |
+          helm upgrade --install rsoi-app ./charts \
+            --namespace test \
+            --set global.imageRegistry=cr.yandex/crpu1332vtb4lbe2bv5n \
+            --set bonusService.imageTag=latest \
+            --set flightService.imageTag=latest \
+            --set ticketService.imageTag=latest \
+            --set gatewayService.imageTag=latest \
+            --set ingress.enabled=true
+
+      - name: Wait for services to be ready
+        run: |
+          kubectl wait -n test -l app.kubernetes.io/name=gateway pod --for=condition=Ready --timeout=3m
+          kubectl wait -n test -l app.kubernetes.io/name=bonus pod --for=condition=Ready --timeout=3m
+          kubectl wait -n test -l app.kubernetes.io/name=flight pod --for=condition=Ready --timeout=3m
+          kubectl wait -n test -l app.kubernetes.io/name=ticket pod --for=condition=Ready --timeout=3m
+
+      - name: Check liveness and readiness probes
+        run: |
+          echo "Checking pods status:"
+          kubectl get pods -n test
+          echo "Checking services:"
+          kubectl get services -n test
+          echo "Checking ingress:"
+          kubectl get ingress -n test
+
       - name: Autograding
         uses: education/autograding@v1
         continue-on-error: true

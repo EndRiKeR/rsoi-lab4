@@ -1,0 +1,15 @@
+appName: "tickets-service"
+replicaCount: 2
+image:
+  repository: "solom/tickets-service"
+  tag: "v1"
+service:
+  port: 80
+  targetPort: 80
+ingress:
+  enabled: true
+  host: "api.example.com"
+  path: "/api/v1/tickets"
+database:
+  name: "ticket_db"
+  secretName: "postgres-secret"

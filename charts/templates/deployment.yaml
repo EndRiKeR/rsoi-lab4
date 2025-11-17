@@ -1,0 +1,108 @@
+{{- $service := index .Values (include "charts.serviceName" .) -}}
+  {{- $defaultValues := .Values -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "charts.fullname" . }}-{{ include "charts.serviceName" . }}
+  labels:
+    {{- include "charts.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "charts.serviceName" . }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ $service.replicaCount | default .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "charts.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/name: {{ include "charts.serviceName" . }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "charts.labels" . | nindent 8 }}
+          {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
+          {{- end }}
+          app.kubernetes.io/name: {{ include "charts.serviceName" . }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "charts.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ include "charts.serviceName" . }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.global.imageRegistry }}/{{ $service.image }}:{{ $service.imageTag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ $service.servicePort | default .Values.service.port }}
+              protocol: TCP
+          env:
+            - name: DATABASE_NAME
+              value: {{ $service.database | quote }}
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+            - name: ASPNETCORE_URLS
+              value: "http://*:{{ $service.servicePort | default .Values.service.port }}"
+          {{- if $service.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ $service.livenessProbe.path | default .Values.livenessProbe.httpGet.path }}
+              port: {{ $service.livenessProbe.port | default .Values.service.port }}
+            initialDelaySeconds: {{ $service.livenessProbe.initialDelaySeconds | default .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ $service.livenessProbe.periodSeconds | default .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: 5
+            failureThreshold: 3
+          {{- else if .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if $service.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ $service.readinessProbe.path | default .Values.readinessProbe.httpGet.path }}
+              port: {{ $service.readinessProbe.port | default .Values.service.port }}
+            initialDelaySeconds: {{ $service.readinessProbe.initialDelaySeconds | default .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ $service.readinessProbe.periodSeconds | default .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: 5
+            failureThreshold: 3
+          {{- else if .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
