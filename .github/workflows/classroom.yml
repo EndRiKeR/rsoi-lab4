@@ -21,38 +21,44 @@ jobs:
       - name: Build images
         timeout-minutes: 10
         run: docker compose build --push
-        
-      - name: Install Yandex Cloud CLI
-        run: |
-          curl -s https://storage.yandex-cloud.net/yandexcloud-yc/install.sh | bash
-          echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
-          
-          sleep 5
-          
-      - name: Verify YC installation
-        run: |
-          which yc
-          yc --version
 
-      - name: Configure YC CLI
+      - name: Setup and Deploy to Yandex Cloud
         run: |
+          # Установка всех инструментов
+          echo "=== Installing Yandex Cloud CLI ==="
+          curl -s https://storage.yandex-cloud.net/yandexcloud-yc/install.sh | bash
+          export PATH=$HOME/yandex-cloud/bin:$PATH
+          
+          echo "=== Installing kubectl ==="
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+          
+          echo "=== Installing Helm ==="
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          
+          # Проверка установки
+          echo "=== Verification ==="
+          yc --version
+          kubectl version --client
+          helm version
+          
+          # Настройка YC CLI
+          echo "=== Configuring YC CLI ==="
           yc config set token "${{ secrets.YC_OAUTH_TOKEN }}"
           yc config set folder-id "b1g1ok9v2ph2i9k05bot"
           yc container registry configure-docker
-
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'v1.28.0'
-
-      - name: Get kubeconfig for Yandex Cloud
-        run: yc managed-kubernetes cluster get-credentials ваш-кластер --external
-
-      - name: Create test namespace
-        run: kubectl create namespace test --dry-run=client -o yaml | kubectl apply -f -
-
-      - name: Deploy PostgreSQL database
-        run: |
+          
+          # Получение доступа к кластеру
+          echo "=== Getting kubeconfig ==="
+          yc managed-kubernetes cluster get-credentials ваш-кластер --external
+          
+          # Создание namespace
+          echo "=== Creating namespace ==="
+          kubectl create namespace test --dry-run=client -o yaml | kubectl apply -f -
+          
+          # Установка PostgreSQL
+          echo "=== Deploying PostgreSQL ==="
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo update
           helm install postgresql bitnami/postgresql \
@@ -61,9 +67,9 @@ jobs:
             --set auth.username=admin \
             --set auth.password=password \
             --set primary.persistence.enabled=false
-
-      - name: Deploy application with Helm
-        run: |
+          
+          # Деплой приложения
+          echo "=== Deploying application ==="
           helm upgrade --install rsoi-app ./charts \
             --namespace test \
             --set global.imageRegistry=cr.yandex/crpu1332vtb4lbe2bv5n \
@@ -72,21 +78,18 @@ jobs:
             --set ticketService.imageTag=latest \
             --set gatewayService.imageTag=latest \
             --set ingress.enabled=true
-
-      - name: Wait for services to be ready
-        run: |
-          kubectl wait -n test -l app.kubernetes.io/name=gateway pod --for=condition=Ready --timeout=3m
-          kubectl wait -n test -l app.kubernetes.io/name=bonus pod --for=condition=Ready --timeout=3m
-          kubectl wait -n test -l app.kubernetes.io/name=flight pod --for=condition=Ready --timeout=3m
-          kubectl wait -n test -l app.kubernetes.io/name=ticket pod --for=condition=Ready --timeout=3m
-
-      - name: Check liveness and readiness probes
-        run: |
-          echo "Checking pods status:"
+          
+          # Ожидание сервисов
+          echo "=== Waiting for services ==="
+          kubectl wait -n test -l app.kubernetes.io/name=gateway pod --for=condition=Ready --timeout=180s
+          kubectl wait -n test -l app.kubernetes.io/name=bonus pod --for=condition=Ready --timeout=180s
+          kubectl wait -n test -l app.kubernetes.io/name=flight pod --for=condition=Ready --timeout=180s
+          kubectl wait -n test -l app.kubernetes.io/name=ticket pod --for=condition=Ready --timeout=180s
+          
+          # Проверка
+          echo "=== Final check ==="
           kubectl get pods -n test
-          echo "Checking services:"
           kubectl get services -n test
-          echo "Checking ingress:"
           kubectl get ingress -n test
 
       - name: Autograding
