@@ -7,8 +7,6 @@ Expand the name of the chart.
 
 {{/*
 Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-If release name contains chart name it will be used as a full name.
 */}}
 {{- define "charts.fullname" -}}
 {{- if .Values.fullnameOverride }}
@@ -49,34 +47,3 @@ Selector labels
 app.kubernetes.io/name: {{ include "charts.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "charts.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "charts.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}
-
-
-{{/*
-Get service name from context
-*/}}
-{{- define "charts.serviceName" -}}
-{{- if .Values.serviceName -}}
-{{- .Values.serviceName -}}
-{{- else if contains "bonus" .Template.Name -}}
-{{- "bonusService" -}}
-{{- else if contains "flight" .Template.Name -}}
-{{- "flightService" -}}
-{{- else if contains "ticket" .Template.Name -}}
-{{- "ticketService" -}}
-{{- else if contains "gateway" .Template.Name -}}
-{{- "gatewayService" -}}
-{{- else -}}
-{{- "default" -}}
-{{- end -}}
-{{- end -}}

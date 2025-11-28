@@ -1,0 +1,20 @@
+fullnameOverride: bonus-service
+
+image:
+  repository: ""
+  tag: "latest"
+
+service:
+  port: 8050
+
+env:
+  - name: DATABASE_URL
+    value: "postgresql://postgres:postgres@postgres:5432/bonuses"
+
+command:
+  - uvicorn
+  - services.bonus_service.main:app
+  - --host
+  - 0.0.0.0
+  - --port
+  - "8050"

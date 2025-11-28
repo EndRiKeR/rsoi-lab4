@@ -1,0 +1,27 @@
+fullnameOverride: gateway-service
+
+image:
+  repository: ""
+  tag: "latest"
+
+service:
+  port: 8080
+
+command:
+  - uvicorn
+  - services.gateway_service.main:app
+  - --host
+  - 0.0.0.0
+  - --port
+  - "8080"
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: ""
+      paths:
+        - path: /
+          pathType: Prefix

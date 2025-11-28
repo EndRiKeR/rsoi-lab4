@@ -62,9 +62,32 @@ jobs:
           echo "=== Deploying application ==="
           helm upgrade rsoi-app ./charts --install \
             --namespace test \
-            --set imageRegistry=cr.yandex/${{secrets.YC_CR_ID}} \
-            --timeout 10m
-        
+            -f ./charts/service-values/gateway-values.yaml \
+            --set image.repository=cr.yandex/${{secrets.YC_CR_ID}} \
+            --set image.tag=latest \
+            --wait
+          
+          helm upgrade rsoi-app ./charts --install \
+            --namespace test \
+            -f ./charts/service-values/tikets-values.yaml \
+            --set image.repository=cr.yandex/${{secrets.YC_CR_ID}} \
+            --set image.tag=latest \
+            --wait
+          
+          helm upgrade rsoi-app ./charts --install \
+            --namespace test \
+            -f ./charts/service-values/flight-values.yaml \
+            --set image.repository=cr.yandex/${{secrets.YC_CR_ID}} \
+            --set image.tag=latest \
+            --wait
+          
+          helm upgrade rsoi-app ./charts --install \
+            --namespace test \
+            -f ./charts/service-values/bonus-values.yaml \
+            --set image.repository=cr.yandex/${{secrets.YC_CR_ID}} \
+            --set image.tag=latest \
+            --wait
+          
           echo "|"
           echo "|"
           echo "=== Waiting for services ==="
