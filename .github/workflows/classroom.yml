@@ -63,28 +63,28 @@ jobs:
           helm upgrade gateway-service ./charts --install \
             --namespace test \
             -f ./charts/service-values/gateway-values.yaml \
-            --set image.repository=cr.yandex/${{secrets.YC_CR_ID}} \
+            --set image.repository=cr.yandex/${{secrets.YC_CR_ID}}/gateway-service \
             --set image.tag=latest \
             --wait
           
           helm upgrade tickets-service ./charts --install \
             --namespace test \
             -f ./charts/service-values/tickets-values.yaml \
-            --set image.repository=cr.yandex/${{secrets.YC_CR_ID}} \
+            --set image.repository=cr.yandex/${{secrets.YC_CR_ID}}/tickets-service \
             --set image.tag=latest \
             --wait
           
-          helm upgrade flights-service ./charts --install \
+          helm upgrade flight-service ./charts --install \
             --namespace test \
             -f ./charts/service-values/flight-values.yaml \
-            --set image.repository=cr.yandex/${{secrets.YC_CR_ID}} \
+            --set image.repository=cr.yandex/${{secrets.YC_CR_ID}}/flight-service \
             --set image.tag=latest \
             --wait
           
           helm upgrade bonus-service ./charts --install \
             --namespace test \
             -f ./charts/service-values/bonus-values.yaml \
-            --set image.repository=cr.yandex/${{secrets.YC_CR_ID}} \
+            --set image.repository=cr.yandex/${{secrets.YC_CR_ID}}/bonus-service \
             --set image.tag=latest \
             --wait
           
