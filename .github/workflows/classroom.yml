@@ -82,6 +82,7 @@ jobs:
           helm upgrade ingress-nginx ingress-nginx/ingress-nginx --install \
           --namespace ingress-nginx \
           --create-namespace \
+          --force \
           --wait
           
           echo "|"
