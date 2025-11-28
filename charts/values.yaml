@@ -90,11 +90,6 @@ ingress:
           pathType: Prefix
   tls: []
 
-image:
-  repository: nginx
-  pullPolicy: IfNotPresent
-  tag: ""
-
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
