@@ -68,12 +68,10 @@ jobs:
           echo "=== Deploying PostgreSQL ==="
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo update
-          helm install postgresql bitnami/postgresql \
+          helm upgrade postgresql bitnami/postgresql \
             --namespace test \
-            --set auth.database=main_db \
-            --set auth.username=postgres \
-            --set auth.password=postgres \
-            --set primary.persistence.enabled=false
+            --set auth.postgresPassword=yourpassword \
+            --set auth.database=yourdatabase
           
           echo "=== Deploying application ==="
           helm upgrade --install rsoi-app ./charts \
