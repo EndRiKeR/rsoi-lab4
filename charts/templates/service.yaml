@@ -10,7 +10,7 @@ spec:
   ports:
     - port: {{ $svc.port }}
       targetPort: {{ $svc.port }}
-{{- if eq $name "gateway" }}
+{{- if eq $name "gateway-service" }}
   type: ClusterIP
 {{- end }}
 ---
