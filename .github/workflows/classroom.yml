@@ -72,21 +72,6 @@ jobs:
           
           echo "|"
           echo "|"
-          echo "=== Creating namespace ==="
-          kubectl create namespace test --dry-run=client -o yaml | kubectl apply -f -
-          
-          echo "|"
-          echo "|"
-          echo "=== Cleaning up previous ingress-nginx installation ==="
-          kubectl delete clusterrole ingress-nginx
-          kubectl delete clusterrolebinding ingress-nginx
-          kubectl delete validatingwebhookconfiguration ingress-nginx-admission
-          
-          kubectl get all -n ingress-nginx
-          kubectl delete namespace ingress-nginx --ignore-not-found=true
-          
-          echo "|"
-          echo "|"
           echo "=== Installing ingress-nginx ==="
           helm upgrade ingress-nginx ingress-nginx/ingress-nginx --install \
           --namespace ingress-nginx \
