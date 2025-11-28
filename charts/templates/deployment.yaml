@@ -1,27 +1,47 @@
-{{- range $name, $svc := .Values.services }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ $name }}
-  namespace: test
+  name: {{ include "service-chart.fullname" . }}
   labels:
-    app: {{ $name }}
+    {{- include "service-chart.labels" . | nindent 4 }}
 spec:
-  replicas: {{ $.Values.replicaCount }}
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ $name }}
+      {{- include "service-chart.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: {{ $name }}
+        {{- include "service-chart.selectorLabels" . | nindent 8 }}
     spec:
       containers:
-        - name: {{ $name }}
-          image: {{ $.Values.imageRegistry }}/{{ $name }}:latest
-          ports:
-            - containerPort: {{ $svc.port }}
-          env:
-            - name: PORT
-              value: "{{ $svc.port }}"
-  {{- end }}
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        {{- if .Values.command }}
+        command:
+        {{- range .Values.command }}
+          - {{ . | quote }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.args }}
+        args:
+        {{- range .Values.args }}
+          - {{ . | quote }}
+        {{- end }}
+        {{- end }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.service.port }}
+          protocol: TCP
+        env:
+        {{- range .Values.env }}
+        - name: {{ .name }}
+          value: {{ .value | quote }}
+        {{- end }}
+        livenessProbe:
+          {{- toYaml .Values.livenessProbe | nindent 10 }}
+        readinessProbe:
+          {{- toYaml .Values.readinessProbe | nindent 10 }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}

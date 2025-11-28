@@ -60,28 +60,28 @@ jobs:
           echo "|"
           echo "|"
           echo "=== Deploying application ==="
-          helm upgrade rsoi-app ./charts --install \
+          helm upgrade gateway-service ./charts --install \
             --namespace test \
             -f ./charts/service-values/gateway-values.yaml \
             --set image.repository=cr.yandex/${{secrets.YC_CR_ID}} \
             --set image.tag=latest \
             --wait
           
-          helm upgrade rsoi-app ./charts --install \
+          helm upgrade tickets-service ./charts --install \
             --namespace test \
             -f ./charts/service-values/tickets-values.yaml \
             --set image.repository=cr.yandex/${{secrets.YC_CR_ID}} \
             --set image.tag=latest \
             --wait
           
-          helm upgrade rsoi-app ./charts --install \
+          helm upgrade flights-service ./charts --install \
             --namespace test \
             -f ./charts/service-values/flight-values.yaml \
             --set image.repository=cr.yandex/${{secrets.YC_CR_ID}} \
             --set image.tag=latest \
             --wait
           
-          helm upgrade rsoi-app ./charts --install \
+          helm upgrade bonus-service ./charts --install \
             --namespace test \
             -f ./charts/service-values/bonus-values.yaml \
             --set image.repository=cr.yandex/${{secrets.YC_CR_ID}} \
