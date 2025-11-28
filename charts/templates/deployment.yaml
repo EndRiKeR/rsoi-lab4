@@ -43,7 +43,7 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.global.imageRegistry }}/{{ $service.image }}:{{ $service.imageTag }}"
+          image: "{{ .Values.global.imageRegistry }}/{{ $service.image.repository | default $service.image }}:{{ $service.image.tag | default $service.imageTag }}"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

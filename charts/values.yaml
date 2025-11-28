@@ -1,10 +1,14 @@
 global:
   imageRegistry: ""
 
+image:
+  pullPolicy: IfNotPresent
+
 bonusService:
   replicaCount: 2
-  image: "bonus-service"
-  imageTag: "latest"
+  image:
+    repository: "bonus-service"
+    tag: "latest"
   servicePort: 80
   database: "bonus_db"
   livenessProbe:
@@ -22,8 +26,9 @@ bonusService:
 
 flightService:
   replicaCount: 2
-  image: "flight-service"
-  imageTag: "latest"
+  image:
+    repository: "flight-service"
+    tag: "latest"
   servicePort: 80
   database: "flight_db"
   livenessProbe:
@@ -41,8 +46,9 @@ flightService:
 
 ticketService:
   replicaCount: 2
-  image: "ticket-service"
-  imageTag: "latest"
+  image:
+    repository: "ticket-service"
+    tag: "latest"
   servicePort: 80
   database: "ticket_db"
   livenessProbe:
@@ -60,8 +66,9 @@ ticketService:
 
 gatewayService:
   replicaCount: 2
-  image: "gateway-service"
-  imageTag: "latest"
+  image:
+    repository: "gateway-service"
+    tag: "latest"
   servicePort: 80
   livenessProbe:
     enabled: true
@@ -159,6 +166,6 @@ volumeMounts: []
 
 nodeSelector: {}
 
-tolerations: []
+tolerations: {}
 
 affinity: {}
