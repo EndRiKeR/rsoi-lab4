@@ -72,6 +72,12 @@ jobs:
           
           echo "|"
           echo "|"
+          echo "=== Add ingress-nginx ==="
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          helm repo update
+          
+          echo "|"
+          echo "|"
           echo "=== Installing ingress-nginx ==="
           helm upgrade ingress-nginx ingress-nginx/ingress-nginx --install \
           --namespace ingress-nginx \
