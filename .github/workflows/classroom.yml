@@ -69,7 +69,7 @@ jobs:
           
           helm upgrade rsoi-app ./charts --install \
             --namespace test \
-            -f ./charts/service-values/tikets-values.yaml \
+            -f ./charts/service-values/tickets-values.yaml \
             --set image.repository=cr.yandex/${{secrets.YC_CR_ID}} \
             --set image.tag=latest \
             --wait
