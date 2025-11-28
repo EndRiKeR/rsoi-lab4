@@ -77,9 +77,13 @@ jobs:
           
           echo "|"
           echo "|"
-          echo "=== Add ingress-nginx ==="
-          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm repo update
+          echo "=== Cleaning up previous ingress-nginx installation ==="
+          kubectl delete clusterrole ingress-nginx
+          kubectl delete clusterrolebinding ingress-nginx
+          kubectl delete validatingwebhookconfiguration ingress-nginx-admission
+          
+          kubectl get all -n ingress-nginx
+          kubectl delete namespace ingress-nginx --ignore-not-found=true
           
           echo "|"
           echo "|"
