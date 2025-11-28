@@ -1,13 +1,13 @@
 imageRegistry: ""
   
 services:
-  bonusService:
+  bonus-service:
     port: 8050
-  flightService:
+  flight-service:
     port: 8060
-  ticketService:
+  ticket-service:
     port: 8070
-  gatewayService:
+  gateway-service:
     port: 8080
 
 replicaCount: 2
