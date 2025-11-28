@@ -86,6 +86,11 @@ jobs:
           
           echo "|"
           echo "|"
+          echo "=== Add namespace ==="
+          kubectl create namespace test --dry-run=client -o yaml | kubectl apply -f -
+          
+          echo "|"
+          echo "|"
           echo "=== Deploying application ==="
           helm upgrade rsoi-app ./charts --install --namespace test --set global.imageRegistry=cr.yandex/${{secrets.YC_CR_ID}}
         
