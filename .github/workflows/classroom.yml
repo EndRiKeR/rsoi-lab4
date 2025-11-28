@@ -78,7 +78,7 @@ jobs:
           echo "|"
           echo "|"
           echo "=== Deploying application ==="
-          helm upgrade rsoi-app ./charts --install --namespace test
+          helm upgrade rsoi-app ./charts --install --namespace test --set global.imageRegistry=cr.yandex/{{secrets.YC_CR_ID}}
           
           echo "|"
           echo "|"

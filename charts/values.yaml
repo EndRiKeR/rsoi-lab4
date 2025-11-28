@@ -1,5 +1,5 @@
 global:
-  imageRegistry: {{ secrets.YC_CR_ID }}
+  imageRegistry: ""
 
 bonusService:
   replicaCount: 2
@@ -90,37 +90,6 @@ ingress:
           pathType: Prefix
   tls: []
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 image:
   repository: nginx
   pullPolicy: IfNotPresent
@@ -146,8 +115,6 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 80
-
-
 
 httpRoute:
   enabled: false
