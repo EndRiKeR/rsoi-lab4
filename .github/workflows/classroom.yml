@@ -26,8 +26,8 @@ jobs:
         run: |
           # Установка всех инструментов
           echo "=== Installing Yandex Cloud CLI ==="
-          curl -s https://storage.yandex-cloud.net/yandexcloud-yc/install.sh | bash
-          export PATH=$HOME/yandex-cloud/bin:$PATH
+          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -a
+          echo "/home/runner/yandex-cloud/bin" >> $GITHUB_PATH
           
           echo "=== Installing kubectl ==="
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
