@@ -77,9 +77,15 @@ jobs:
           
           echo "|"
           echo "|"
+          echo "=== Add ingress-nginx ==="
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          helm repo update
+          
+          echo "|"
+          echo "|"
           echo "=== Deploying application ==="
           helm upgrade rsoi-app ./charts --install --namespace test --set global.imageRegistry=cr.yandex/{{secrets.YC_CR_ID}}
-          
+        
           echo "|"
           echo "|"
           echo "=== Waiting for services ==="
