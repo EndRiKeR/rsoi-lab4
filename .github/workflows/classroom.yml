@@ -44,7 +44,7 @@ jobs:
         run: |
           echo "=== Installing Yandex Cloud CLI ==="
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -a
-          echo "/home/runner/yandex-cloud/bin" >> $GITHUB_PATH
+          export PATH="/home/runner/yandex-cloud/bin:$PATH"
           
           echo "=== Installing kubectl ==="
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -60,7 +60,7 @@ jobs:
           yc container registry configure-docker
           
           echo "=== Getting kubeconfig ==="
-          yc managed-kubernetes cluster get-credentials ваш-кластер --external
+          yc managed-kubernetes cluster get-credentials test-kuber --external
           
           echo "=== Creating namespace ==="
           kubectl create namespace test --dry-run=client -o yaml | kubectl apply -f -
@@ -71,8 +71,8 @@ jobs:
           helm install postgresql bitnami/postgresql \
             --namespace test \
             --set auth.database=main_db \
-            --set auth.username=admin \
-            --set auth.password=password \
+            --set auth.username=postgres \
+            --set auth.password=postgres \
             --set primary.persistence.enabled=false
           
           echo "=== Deploying application ==="
