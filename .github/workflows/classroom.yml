@@ -68,7 +68,7 @@ jobs:
           echo "|"
           echo "|"
           echo "=== Getting kubeconfig ==="
-          yc managed-kubernetes cluster get-credentials test-kuber --external
+          yc managed-kubernetes cluster get-credentials rsoi-kuber --external
           
           echo "|"
           echo "|"
@@ -79,7 +79,7 @@ jobs:
           echo "|"
           echo "|"
           echo "=== Installing ingress-nginx ==="
-          helm upgrade rsoi-ingress-nginx ingress-nginx/ingress-nginx --install \
+          helm upgrade ingress-nginx ingress-nginx/ingress-nginx --install \
           --namespace ingress-nginx \
           --create-namespace \
           --wait
