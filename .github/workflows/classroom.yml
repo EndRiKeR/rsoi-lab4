@@ -65,13 +65,13 @@ jobs:
           echo "=== Creating namespace ==="
           kubectl create namespace test --dry-run=client -o yaml | kubectl apply -f -
           
-          echo "=== Deploying PostgreSQL ==="
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo update
-          helm upgrade postgresql bitnami/postgresql \
-            --namespace test \
-            --set auth.postgresPassword=yourpassword \
-            --set auth.database=yourdatabase
+#          echo "=== Deploying PostgreSQL ==="
+#          helm repo add bitnami https://charts.bitnami.com/bitnami
+#          helm repo update
+#          helm upgrade postgresql bitnami/postgresql \
+#            --namespace test \
+#            --set auth.postgresPassword=postgres \
+#            --set auth.database=postgres
           
           echo "=== Deploying application ==="
           helm upgrade --install rsoi-app ./charts \
