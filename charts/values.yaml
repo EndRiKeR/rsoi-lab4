@@ -11,3 +11,6 @@ services:
     port: 8050
 
 replicaCount: 2
+
+image:
+  pullPolicy: Always
