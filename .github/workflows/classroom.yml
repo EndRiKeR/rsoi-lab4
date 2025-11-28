@@ -78,7 +78,7 @@ jobs:
           echo "=== Deploying application ==="
           helm upgrade --install rsoi-app ./charts \
             --namespace test \
-            --set global.imageRegistry=cr.yandex/crpu1332vtb4lbe2bv5n \
+            --set global.imageRegistry=cr.yandex/{{ secrets.YC_CR_ID }} \
             --set bonusService.imageTag=latest \
             --set flightService.imageTag=latest \
             --set ticketService.imageTag=latest \
