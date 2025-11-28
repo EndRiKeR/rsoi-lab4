@@ -15,10 +15,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-
+          
       - uses: docker/setup-buildx-action@v2
-        
         
       - name: Login to Yandex Container Registry
         uses: docker/login-action@v3
@@ -42,59 +40,63 @@ jobs:
           
       - name: Setup and Deploy to Yandex Cloud
         run: |
-          echo ""
+          echo "|"
+          echo "|"
           echo "=== Installing Yandex Cloud CLI ==="
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -a
           export PATH="/home/runner/yandex-cloud/bin:$PATH"
           
-          echo ""
+          echo "|"
+          echo "|"
           echo "=== Installing kubectl ==="
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
           
-          echo ""
+          echo "|"
+          echo "|"
           echo "=== Installing Helm ==="
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
           
-          echo ""
+          echo "|"
+          echo "|"
           echo "=== Configuring YC CLI ==="
           yc config set token "${{ secrets.YC_OAUTH_TOKEN }}"
           yc config set folder-id "b1g1ok9v2ph2i9k05bot"
           yc container registry configure-docker
           
-          echo ""
+          echo "|"
+          echo "|"
           echo "=== Getting kubeconfig ==="
           yc managed-kubernetes cluster get-credentials test-kuber --external
           
-          echo ""
+          echo "|"
+          echo "|"
           echo "=== Creating namespace ==="
           kubectl create namespace test --dry-run=client -o yaml | kubectl apply -f -
           
-          echo ""
-          echo "=== Update ingress-nginx ==="
-          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm repo update
-          
-          echo ""
+          echo "|"
+          echo "|"
           echo "=== Deploying application ==="
           helm upgrade --install rsoi-app ./charts \
             --namespace test \
             --set global.imageRegistry=cr.yandex/{{ secrets.YC_CR_ID }} \
-            --set bonusService.imageTag=latest \
-            --set flightService.imageTag=latest \
-            --set ticketService.imageTag=latest \
-            --set gatewayService.imageTag=latest \
+            --set gateway-service.imageTag=latest \
+            --set tickets-service.imageTag=latest \
+            --set bonus-service.imageTag=latest \
+            --set flight-service.imageTag=latest \
             --set ingress.enabled=true
           
-          echo ""
+          echo "|"
+          echo "|"
           echo "=== Waiting for services ==="
           kubectl wait -n test -l app.kubernetes.io/name=gateway pod --for=condition=Ready --timeout=180s
           kubectl wait -n test -l app.kubernetes.io/name=bonus pod --for=condition=Ready --timeout=180s
           kubectl wait -n test -l app.kubernetes.io/name=flight pod --for=condition=Ready --timeout=180s
           kubectl wait -n test -l app.kubernetes.io/name=ticket pod --for=condition=Ready --timeout=180s
           
-          echo ""
+          echo "|"
+          echo "|"
           echo "=== Final check ==="
           kubectl get pods -n test
           kubectl get services -n test
