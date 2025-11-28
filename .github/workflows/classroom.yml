@@ -29,14 +29,14 @@ jobs:
         timeout-minutes: 15
         run: |
           docker build -t cr.yandex/${{ secrets.YC_CR_ID }}/GatewayService:latest ./services/GatewayService
-          docker build -t cr.yandex/${{ secrets.YC_CR_ID }}/TiketsService:latest ./services/TiketsService
+          docker build -t cr.yandex/${{ secrets.YC_CR_ID }}/TicketsService:latest ./services/TicketsService
           docker build -t cr.yandex/${{ secrets.YC_CR_ID }}/BonusesService:latest ./services/BonusesService
-          docker build -t cr.yandex/${{ secrets.YC_CR_ID }}/FilghtService:latest ./services/FilghtService
+          docker build -t cr.yandex/${{ secrets.YC_CR_ID }}/FlightService:latest ./services/FlightService
 
           docker push cr.yandex/${{ secrets.YC_CR_ID }}/GatewayService:latest
-          docker push cr.yandex/${{ secrets.YC_CR_ID }}/TiketsService:latest
+          docker push cr.yandex/${{ secrets.YC_CR_ID }}/TicketsService:latest
           docker push cr.yandex/${{ secrets.YC_CR_ID }}/BonusesService:latest
-          docker push cr.yandex/${{ secrets.YC_CR_ID }}/FilghtService:latest  
+          docker push cr.yandex/${{ secrets.YC_CR_ID }}/FlightService:latest  
           
       - name: Setup and Deploy to Yandex Cloud
         run: |
