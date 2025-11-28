@@ -64,29 +64,25 @@ jobs:
             --namespace test \
             -f ./charts/service-values/gateway-values.yaml \
             --set image.repository=cr.yandex/${{secrets.YC_CR_ID}}/gateway-service \
-            --set image.tag=latest \
-            --wait
+            --set image.tag=latest
           
           helm upgrade tickets-service ./charts --install \
             --namespace test \
             -f ./charts/service-values/tickets-values.yaml \
             --set image.repository=cr.yandex/${{secrets.YC_CR_ID}}/tickets-service \
-            --set image.tag=latest \
-            --wait
+            --set image.tag=latest
           
           helm upgrade flight-service ./charts --install \
             --namespace test \
             -f ./charts/service-values/flight-values.yaml \
             --set image.repository=cr.yandex/${{secrets.YC_CR_ID}}/flight-service \
-            --set image.tag=latest \
-            --wait
+            --set image.tag=latest
           
           helm upgrade bonus-service ./charts --install \
             --namespace test \
             -f ./charts/service-values/bonus-values.yaml \
             --set image.repository=cr.yandex/${{secrets.YC_CR_ID}}/bonus-service \
-            --set image.tag=latest \
-            --wait
+            --set image.tag=latest
           
           echo "|"
           echo "|"
