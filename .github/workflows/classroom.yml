@@ -60,8 +60,10 @@ jobs:
           echo "|"
           echo "|"
           echo "=== Deploying application ==="
-          helm upgrade rsoi-app ./charts --install --namespace test \
+          helm upgrade rsoi-app ./charts --install \
+            --namespace test \
             --set imageRegistry=cr.yandex/${{secrets.YC_CR_ID}}
+            --timeout 10m
         
           echo "|"
           echo "|"

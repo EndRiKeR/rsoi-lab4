@@ -1,12 +1,11 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: gateway-ingress
+  name: gateway
+  namespace: test
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-  labels:
-    app.kubernetes.io/component: controller
 spec:
   rules:
     - http:
@@ -17,4 +16,4 @@ spec:
               service:
                 name: gateway-service
                 port:
-                  number: 80
+                  number: 8080
