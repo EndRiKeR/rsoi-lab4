@@ -5,7 +5,7 @@ services:
     port: 8050
   flight-service:
     port: 8060
-  ticket-service:
+  tickets-service:
     port: 8070
   gateway-service:
     port: 8080
