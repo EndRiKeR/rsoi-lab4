@@ -72,20 +72,6 @@ jobs:
           
           echo "|"
           echo "|"
-          echo "=== Add ingress-nginx ==="
-          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm repo update
-          
-          echo "|"
-          echo "|"
-          echo "=== Installing ingress-nginx ==="
-          helm upgrade ingress-nginx ingress-nginx/ingress-nginx --install \
-          --namespace ingress-nginx \
-          --create-namespace \
-          --wait
-          
-          echo "|"
-          echo "|"
           echo "=== Add namespace ==="
           kubectl create namespace test --dry-run=client -o yaml | kubectl apply -f -
           
