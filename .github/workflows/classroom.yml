@@ -79,10 +79,9 @@ jobs:
           echo "|"
           echo "|"
           echo "=== Installing ingress-nginx ==="
-          helm upgrade ingress-nginx ingress-nginx/ingress-nginx --install \
+          helm upgrade rsoi-ingress-nginx ingress-nginx/ingress-nginx --install \
           --namespace ingress-nginx \
           --create-namespace \
-          --force \
           --wait
           
           echo "|"
