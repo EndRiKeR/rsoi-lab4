@@ -24,7 +24,6 @@ jobs:
 
       - name: Setup and Deploy to Yandex Cloud
         run: |
-          # Установка всех инструментов
           echo "=== Installing Yandex Cloud CLI ==="
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -a
           echo "/home/runner/yandex-cloud/bin" >> $GITHUB_PATH
@@ -37,27 +36,22 @@ jobs:
           echo "=== Installing Helm ==="
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
           
-          # Проверка установки
           echo "=== Verification ==="
           yc --version
           kubectl version --client
           helm version
           
-          # Настройка YC CLI
           echo "=== Configuring YC CLI ==="
           yc config set token "${{ secrets.YC_OAUTH_TOKEN }}"
           yc config set folder-id "b1g1ok9v2ph2i9k05bot"
           yc container registry configure-docker
           
-          # Получение доступа к кластеру
           echo "=== Getting kubeconfig ==="
           yc managed-kubernetes cluster get-credentials ваш-кластер --external
           
-          # Создание namespace
           echo "=== Creating namespace ==="
           kubectl create namespace test --dry-run=client -o yaml | kubectl apply -f -
           
-          # Установка PostgreSQL
           echo "=== Deploying PostgreSQL ==="
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo update
@@ -68,7 +62,6 @@ jobs:
             --set auth.password=password \
             --set primary.persistence.enabled=false
           
-          # Деплой приложения
           echo "=== Deploying application ==="
           helm upgrade --install rsoi-app ./charts \
             --namespace test \
@@ -79,14 +72,12 @@ jobs:
             --set gatewayService.imageTag=latest \
             --set ingress.enabled=true
           
-          # Ожидание сервисов
           echo "=== Waiting for services ==="
           kubectl wait -n test -l app.kubernetes.io/name=gateway pod --for=condition=Ready --timeout=180s
           kubectl wait -n test -l app.kubernetes.io/name=bonus pod --for=condition=Ready --timeout=180s
           kubectl wait -n test -l app.kubernetes.io/name=flight pod --for=condition=Ready --timeout=180s
           kubectl wait -n test -l app.kubernetes.io/name=ticket pod --for=condition=Ready --timeout=180s
           
-          # Проверка
           echo "=== Final check ==="
           kubectl get pods -n test
           kubectl get services -n test
