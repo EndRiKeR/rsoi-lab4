@@ -1,5 +1,5 @@
 {{- $service := index .Values (include "charts.serviceName" .) -}}
-  {{- $defaultValues := .Values -}}
+{{- $defaultValues := .Values -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22,11 +22,11 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "charts.labels" . | nindent 8 }}
-          {{- with .Values.podLabels }}
-          {{- toYaml . | nindent 8 }}
-          {{- end }}
-          app.kubernetes.io/name: {{ include "charts.serviceName" . }}
+        {{- include "charts.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        app.kubernetes.io/name: {{ include "charts.serviceName" . }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
