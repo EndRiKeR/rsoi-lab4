@@ -24,7 +24,7 @@ jobs:
           registry: cr.yandex
           username: oauth
           password: ${{ secrets.YC_OAUTH_TOKEN }}
-
+          
       - name: Build and push images
         timeout-minutes: 15
         run: |
@@ -37,7 +37,7 @@ jobs:
           docker push cr.yandex/${{ secrets.YC_CR_ID }}/TiketsService:latest
           docker push cr.yandex/${{ secrets.YC_CR_ID }}/BonusesService:latest
           docker push cr.yandex/${{ secrets.YC_CR_ID }}/FilghtService:latest  
-
+          
       - name: Setup and Deploy to Yandex Cloud
         run: |
           echo "=== Installing Yandex Cloud CLI ==="
