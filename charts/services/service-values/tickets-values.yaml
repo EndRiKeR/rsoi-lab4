@@ -8,5 +8,5 @@ service:
   port: 8070
 
 env:
-  - name: DATABASE_URL
+  - name: DOCKER_CONNECT_STRING
     value: "postgresql://postgres:postgres@postgres:5432/tickets"
