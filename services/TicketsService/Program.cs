@@ -47,7 +47,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.MapHealthChecks("/manage/health");
+
 app.UseAuthorization();
 app.MapControllers();
 
-app.Run();
+try
+{
+    Console.WriteLine("|");
+    Console.WriteLine("|");
+    Console.WriteLine("Application starting...");
+    app.Run();
+}
+catch (Exception e)
+{
+    Console.WriteLine(e);
+    throw;
+}
