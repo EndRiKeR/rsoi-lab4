@@ -60,7 +60,7 @@ jobs:
           echo "|"
           echo "|"
           echo "=== Deploying Postgres ==="
-          helm install postgres ./charts/postgres -f ./charts/postgres/values.yaml
+          helm upgrade postgres ./charts/postgres --install -f ./charts/postgres/values.yaml
           
           echo "|"
           echo "|"
