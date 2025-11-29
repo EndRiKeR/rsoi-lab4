@@ -10,7 +10,7 @@ service:
 
 env:
   - name: POSTGRES_DB
-    value: "rsoi"
+    value: "postgres"
   - name: POSTGRES_USER
     value: "postgres"
   - name: POSTGRES_PASSWORD
