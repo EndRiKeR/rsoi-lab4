@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "charts.fullname" . }}-pvc
+  name: {{ include "postgres.fullname" . }}-pvc
   labels:
-    {{- include "charts.labels" . | nindent 4 }}
+    {{- include "postgres.labels" . | nindent 4 }}
 spec:
   accessModes:
     - ReadWriteOnce

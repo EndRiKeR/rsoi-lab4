@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "charts.fullname" . }}
+  name: {{ include "postgres.fullname" . }}
   labels:
-    {{- include "charts.labels" . | nindent 4 }}
+    {{- include "postgres.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: 1
   selector:
     matchLabels:
-      {{- include "charts.selectorLabels" . | nindent 6 }}
+      {{- include "postgres.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "charts.selectorLabels" . | nindent 8 }}
+        {{- include "postgres.selectorLabels" . | nindent 8 }}
     spec:
       containers:
       - name: postgres
@@ -42,7 +42,7 @@ spec:
       - name: postgres-storage
       {{- if .Values.persistence.enabled }}
         persistentVolumeClaim:
-          claimName: {{ include "charts.fullname" . }}-pvc
+          claimName: {{ include "postgres.fullname" . }}-pvc
       {{- else }}
         emptyDir: {}
       {{- end }}
