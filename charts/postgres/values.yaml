@@ -49,3 +49,9 @@ readinessProbe:
   periodSeconds: 5
   timeoutSeconds: 3
   failureThreshold: 3
+  
+initdbScripts:
+  01-create-databases.sql: |
+    CREATE DATABASE flights;
+    CREATE DATABASE bonuses; 
+    CREATE DATABASE tickets;
