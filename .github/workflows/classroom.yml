@@ -59,6 +59,19 @@ jobs:
           
           echo "|"
           echo "|"
+          echo "=== Deploy Postgres ==="
+          helm upgrade --install postgres ./helm/postgres-chart \
+            --namespace test \
+            --create-namespace \
+            --wait
+
+          echo "|"
+          echo "|"
+          echo "=== Whait for Postgres ==="
+          kubectl rollout status deployment/postgres -n test --timeout=5m
+          
+          echo "|"
+          echo "|"
           echo "=== Deploying application ==="
           helm upgrade gateway-service ./charts --install \
             --namespace test \
@@ -87,11 +100,11 @@ jobs:
           echo "|"
           echo "|"
           echo "=== Waiting for services ==="
-          kubectl wait -n test -l app.kubernetes.io/instance=gateway-service pod --for=condition=Running --timeout=180s
-          kubectl wait -n test -l app.kubernetes.io/instance=bonus-service pod --for=condition=Running --timeout=180s
-          kubectl wait -n test -l app.kubernetes.io/instance=flight-service pod --for=condition=Running --timeout=180s
-          kubectl wait -n test -l app.kubernetes.io/instance=tickets-service pod --for=condition=Running --timeout=180s
-
+          kubectl wait -n test -l app.kubernetes.io/instance=gateway-service pod --for=condition=Ready --timeout=180s
+          kubectl wait -n test -l app.kubernetes.io/instance=bonus-service pod --for=condition=Ready --timeout=180s
+          kubectl wait -n test -l app.kubernetes.io/instance=flight-service pod --for=condition=Ready --timeout=180s
+          kubectl wait -n test -l app.kubernetes.io/instance=tickets-service pod --for=condition=Ready --timeout=180s
+          
       - name: Autograding
         uses: education/autograding@v1
         continue-on-error: true
