@@ -24,6 +24,19 @@ jobs:
           registry: cr.yandex
           username: oauth
           password: ${{ secrets.YC_OAUTH_TOKEN }}
+
+      - name: Build and push images
+        timeout-minutes: 15
+        run: |
+          docker build -t cr.yandex/${{ secrets.YC_CR_ID }}/gateway-service:latest -f ./services/GatewayService/Dockerfile .
+          docker build -t cr.yandex/${{ secrets.YC_CR_ID }}/tickets-service:latest -f ./services/TicketsService/Dockerfile .
+          docker build -t cr.yandex/${{ secrets.YC_CR_ID }}/bonus-service:latest -f ./services/BonusService/Dockerfile .
+          docker build -t cr.yandex/${{ secrets.YC_CR_ID }}/flight-service:latest -f ./services/FlightService/Dockerfile .
+          
+          docker push cr.yandex/${{ secrets.YC_CR_ID }}/gateway-service:latest
+          docker push cr.yandex/${{ secrets.YC_CR_ID }}/tickets-service:latest
+          docker push cr.yandex/${{ secrets.YC_CR_ID }}/bonus-service:latest
+          docker push cr.yandex/${{ secrets.YC_CR_ID }}/flight-service:latest  
           
       - name: Setup and Deploy to Yandex Cloud
         run: |
