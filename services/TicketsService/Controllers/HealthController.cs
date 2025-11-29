@@ -9,9 +9,8 @@ namespace TicketsService.Controllers
     public class HealthController : ControllerBase
     {
         private readonly TicketsContext _dbContext;
-        private readonly ILogger<HealthController> _logger;
 
-        public HealthController(TicketsContext dbContext, ILogger<HealthController> logger)
+        public HealthController(TicketsContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -21,11 +20,9 @@ namespace TicketsService.Controllers
         {
             try
             {
-                _logger.LogInformation("Health check is started.");
                 var canConnect = await _dbContext.Database.CanConnectAsync();
                 if (!canConnect)
                 {
-                    _logger.LogInformation("Health check said u can't connect to DB =(((");
                     return StatusCode(503, new
                     {
                         status = "Unhealthy",
@@ -37,10 +34,8 @@ namespace TicketsService.Controllers
                     });
                 }
                 
-                _logger.LogInformation("Health check said u can connect to DB.");
-                _logger.LogInformation("Health check cheks cols in DB.");
                 var ticketsCount = await _dbContext.Tickets.CountAsync();
-                _logger.LogInformation("Health check said all ok.");
+                
                 var result = new
                 {
                     status = "Healthy",
@@ -55,7 +50,6 @@ namespace TicketsService.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Health check failed.");
                 return StatusCode(503, new
                 {
                     status = "Unhealthy",
