@@ -4,7 +4,7 @@ kind: Ingress
 metadata:
   name: {{ include "charts.fullname" . }}
   labels:
-    {{- include "charts.labels" . | nindent 4 }}
+    {{- include "charts.services.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

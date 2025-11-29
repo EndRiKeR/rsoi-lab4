@@ -1,15 +1,14 @@
-# charts/postgres/templates/_helpers.tpl
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "postgres.name" -}}
+{{- define "charts.postgres.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Create a default fully qualified app name.
 */}}
-{{- define "postgres.fullname" -}}
+{{- define "charts.postgres.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -25,16 +24,16 @@ Create a default fully qualified app name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "postgres.chart" -}}
+{{- define "charts.postgres.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "postgres.labels" -}}
-helm.sh/chart: {{ include "postgres.chart" . }}
-{{ include "postgres.selectorLabels" . }}
+{{- define "charts.postgres.labels" -}}
+helm.sh/chart: {{ include "charts.postgres.chart" . }}
+{{ include "charts.postgres.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -44,7 +43,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "postgres.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "postgres.name" . }}
+{{- define "charts.postgres.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "charts.postgres.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
