@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHealthChecks();
 
 builder.Services.AddHttpClient("Gateway", client =>
 {
@@ -50,7 +51,7 @@ if (app.Environment.IsDevelopment())
 app.MapHealthChecks("/manage/health");
 
 app.UseAuthorization();
-app.MapControllers();
+app.MapControllers();   
 
 try
 {
