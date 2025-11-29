@@ -59,16 +59,8 @@ jobs:
           
           echo "|"
           echo "|"
-          echo "=== Deploy Postgres ==="
-          helm upgrade --install postgres ./helm/postgres-chart \
-            --namespace test \
-            --create-namespace \
-            --wait
-
-          echo "|"
-          echo "|"
-          echo "=== Whait for Postgres ==="
-          kubectl rollout status deployment/postgres -n test --timeout=5m
+          echo "=== Deploying Postgres ==="
+          helm install postgres ./charts/postgres -f ./charts/postgres/values.yaml
           
           echo "|"
           echo "|"

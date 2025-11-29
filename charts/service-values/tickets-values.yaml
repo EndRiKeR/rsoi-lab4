@@ -10,11 +10,3 @@ service:
 env:
   - name: DATABASE_URL
     value: "postgresql://postgres:postgres@postgres:5432/tickets"
-
-command:
-  - uvicorn
-  - services.tickets_service.main:app
-  - --host
-  - 0.0.0.0
-  - --port
-  - "8070"
