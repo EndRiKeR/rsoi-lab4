@@ -61,7 +61,7 @@ jobs:
           echo "|"
           echo "=== Deploying Postgres ==="
           helm upgrade postgres ./charts/postgres --install -n test -f ./charts/postgres/values.yaml
-          kubectl apply -f ./charts/postgres/config-map.yaml -n test
+          kubectl apply -f ./charts/postgres/templates/config-map.yaml -n test
 
           echo "|"
           echo "|"
