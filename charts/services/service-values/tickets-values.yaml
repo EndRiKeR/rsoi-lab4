@@ -9,4 +9,4 @@ service:
 
 env:
   - name: DOCKER_CONNECT_STRING
-    value: "postgresql://postgres:postgres@postgres:5432/tickets"
+    value: "Host=postgres;Port=5432;Database=tickets;Username=postgres;Password=postgres"
