@@ -12,7 +12,7 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "charts.services.services.selectorLabels" . | nindent 8 }}
+        {{- include "charts.services.selectorLabels" . | nindent 8 }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
