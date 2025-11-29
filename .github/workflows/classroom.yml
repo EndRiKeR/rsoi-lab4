@@ -61,6 +61,11 @@ jobs:
           echo "|"
           echo "=== Deploying Postgres ==="
           helm upgrade postgres ./charts/postgres --install -n test -f ./charts/postgres/values.yaml
+
+          echo "|"
+          echo "|"
+          echo "=== Init Postgres ==="
+          kubectl run create-dbs -n test --image=postgres:13 --restart=Never --command -- psql -h postgres -U postgres -c "CREATE DATABASE flights; CREATE DATABASE bonuses; CREATE DATABASE tickets;" || true
           
           echo "|"
           echo "|"
