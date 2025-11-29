@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ include "charts.postgres.fullname" . }}
   labels:
-    {{- include "postgres.labels" . | nindent 4 }}
+    {{- include "charts.postgres.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
