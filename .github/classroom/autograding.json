@@ -3,7 +3,7 @@
     {
       "name": "Run Test Script",
       "setup": "",
-      "run": "scripts/test-script.sh v1 rsoi-kuber test",
+      "run": "./scripts/test-script.sh v1 rsoi-kuber test",
       "input": "",
       "output": "",
       "comparison": "included",
