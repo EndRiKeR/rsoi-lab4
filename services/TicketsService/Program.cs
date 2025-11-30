@@ -50,4 +50,4 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 app.MapControllers();   
 
-app.Run();
+app.Run("http://0.0.0.0:8070");
