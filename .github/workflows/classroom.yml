@@ -8,23 +8,23 @@ on:
       - master
 
 jobs:
-  build:
-    name: Autograding
+  build-images:
+    name: Send images to Yandex Container Registry
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - uses: docker/setup-buildx-action@v2
-        
+
       - name: Login to Yandex Container Registry
         uses: docker/login-action@v3
         with:
           registry: cr.yandex
           username: oauth
           password: ${{ secrets.YC_OAUTH_TOKEN }}
-          
+
       - name: Build and push images
         timeout-minutes: 15
         run: |
@@ -36,8 +36,18 @@ jobs:
           docker push cr.yandex/${{ secrets.YC_CR_ID }}/gateway-service:latest
           docker push cr.yandex/${{ secrets.YC_CR_ID }}/tickets-service:latest
           docker push cr.yandex/${{ secrets.YC_CR_ID }}/bonus-service:latest
-          docker push cr.yandex/${{ secrets.YC_CR_ID }}/flight-service:latest  
+          docker push cr.yandex/${{ secrets.YC_CR_ID }}/flight-service:latest
           
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: docker/setup-buildx-action@v2
+
       - name: Setup and Deploy to Yandex Cloud
         run: |
           echo "|"
@@ -45,31 +55,31 @@ jobs:
           echo "=== Installing Yandex Cloud CLI ==="
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -a
           export PATH="/home/runner/yandex-cloud/bin:$PATH"
-          
+
           echo "|"
           echo "|"
           echo "=== Installing kubectl ==="
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
-          
+
           echo "|"
           echo "|"
           echo "=== Installing Helm ==="
           curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-          
+
           echo "|"
           echo "|"
           echo "=== Configuring YC CLI ==="
           yc config set token "${{ secrets.YC_OAUTH_TOKEN }}"
           yc config set folder-id "b1g1ok9v2ph2i9k05bot"
           yc container registry configure-docker
-          
+
           echo "|"
           echo "|"
           echo "=== Getting kubeconfig ==="
           yc managed-kubernetes cluster get-credentials rsoi-kuber --external
-          
+
           echo "|"
           echo "|"
           echo "=== Deploying Postgres ==="
@@ -84,25 +94,25 @@ jobs:
             -f ./charts/services/service-values/gateway-values.yaml \
             --set image.repository=cr.yandex/${{secrets.YC_CR_ID}}/gateway-service \
             --set image.tag=latest
-          
+
           helm upgrade tickets-service ./charts/services --install \
             --namespace test \
             -f ./charts/services/service-values/tickets-values.yaml \
             --set image.repository=cr.yandex/${{secrets.YC_CR_ID}}/tickets-service \
             --set image.tag=latest
-          
+
           helm upgrade flight-service ./charts/services --install \
             --namespace test \
             -f ./charts/services/service-values/flight-values.yaml \
             --set image.repository=cr.yandex/${{secrets.YC_CR_ID}}/flight-service \
             --set image.tag=latest
-          
+
           helm upgrade bonus-service ./charts/services --install \
             --namespace test \
             -f ./charts/services/service-values/bonus-values.yaml \
             --set image.repository=cr.yandex/${{secrets.YC_CR_ID}}/bonus-service \
             --set image.tag=latest
-          
+
           echo "|"
           echo "|"
           echo "=== Waiting for services ==="
@@ -110,7 +120,17 @@ jobs:
           kubectl wait -n test -l app.kubernetes.io/instance=flight-service pod --for=condition=Ready --timeout=180s
           kubectl wait -n test -l app.kubernetes.io/instance=tickets-service pod --for=condition=Ready --timeout=180s
           kubectl wait -n test -l app.kubernetes.io/instance=gateway-service pod --for=condition=Ready --timeout=180s
-      
+          
+  autograding:
+    name: Autograding
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: docker/setup-buildx-action@v2  
+
       - name: Start port-forward to gateway
         run: |
           nohup kubectl port-forward service/gateway-service -n test 8080:8080 > port-forward.log 2>&1 &
