@@ -69,7 +69,7 @@ namespace GatewayService.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(200, new
+                return StatusCode(503, new
                 {
                     status = "Unhealthy",
                     timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
