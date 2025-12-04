@@ -15,7 +15,7 @@ public class CircuitBreaker : ICircuitBreaker
 
     private readonly ILogger<CircuitBreaker> _logger;
     private readonly int _maxFailuresBeforeOpen = 5;
-    private readonly TimeSpan _openToHalfOpenTimeout = TimeSpan.FromSeconds(10);
+    private readonly TimeSpan _openToHalfOpenTimeout = TimeSpan.FromSeconds(5);
     
     public CircuitBreaker(ILogger<CircuitBreaker> logger)
     {
