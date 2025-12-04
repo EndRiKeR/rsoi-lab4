@@ -40,11 +40,7 @@ step() {
   printf "=== Step %d: scale %s to %s ===\n" "$step" "$deployment" "$replicas"
 
   kubectl scale deployment "$deployment" -n "$namespace" --replicas "$replicas"
-
-  sleep 5
-
-  kubectl logs deployment/gateway-service --tail=100 --since=5m | grep -A 10 -B 10 "error\|Error\|Exception\|fail\|Fail"
-
+  
   newman run \
     --delay-request=100 \
     --folder=step"$step" \
