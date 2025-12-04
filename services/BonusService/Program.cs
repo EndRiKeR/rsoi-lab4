@@ -9,10 +9,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddHttpClient("Gateway", client =>
+builder.Services.AddSingleton<Lazy<HttpClient>>(sp => new Lazy<HttpClient>(() =>
 {
-    client.BaseAddress = new Uri("http://gateway-service:8080");
-});
+    return new HttpClient
+    {
+        BaseAddress = new Uri("http://gateway-service:8080"),
+        Timeout = TimeSpan.FromSeconds(30)
+    };
+}));
 
 var connectionString = Environment.GetEnvironmentVariable("DOCKER_CONNECT_STRING") 
                        ?? builder.Configuration.GetConnectionString("DefaultConnection");
