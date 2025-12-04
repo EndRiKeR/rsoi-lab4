@@ -120,6 +120,10 @@ jobs:
 
       - name: Autograding
         uses: education/autograding@v1
+        continue-on-error: true
+
+      - name: Run tests
+        run: bash ./.github/classroom/test-script.sh
 
       - name: Stop port-forward
         if: always()
