@@ -41,6 +41,8 @@ step() {
 
   kubectl scale deployment "$deployment" -n "$namespace" --replicas "$replicas" 
 
+  sleep 10
+
   newman run \
     --delay-request=100 \
     --folder=step"$step" \
