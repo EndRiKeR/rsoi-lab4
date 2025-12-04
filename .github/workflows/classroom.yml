@@ -134,9 +134,35 @@ jobs:
 
       - name: Installing kubectl
         run: |
+          echo "|"
+          echo "|"
+          echo "=== Installing Yandex Cloud CLI ==="
+          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -a
+          export PATH="/home/runner/yandex-cloud/bin:$PATH"
+
+          echo "|"
+          echo "|"
+          echo "=== Installing kubectl ==="
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
+
+          echo "|"
+          echo "|"
+          echo "=== Installing Helm ==="
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+          echo "|"
+          echo "|"
+          echo "=== Configuring YC CLI ==="
+          yc config set token "${{ secrets.YC_OAUTH_TOKEN }}"
+          yc config set folder-id "b1g1ok9v2ph2i9k05bot"
+          yc container registry configure-docker
+
+          echo "|"
+          echo "|"
+          echo "=== Getting kubeconfig ==="
+          yc managed-kubernetes cluster get-credentials rsoi-kuber --external
 
       - name: Start port-forward to gateway
         run: |
