@@ -3,7 +3,7 @@
     {
       "name": "Run Test Script",
       "setup": "",
-      "run": "./.github/classroom/test-script.sh v1 flight-service test",
+      "run": "./.github/classroom/test-script.sh v1 bonus-service test",
       "input": "",
       "output": "",
       "comparison": "included",
