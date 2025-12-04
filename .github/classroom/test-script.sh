@@ -44,8 +44,6 @@ step() {
   sleep 10
 
   newman run \
-    --timeout-request 10000 \
-    --timeout-script 60000 \
     --delay-request=100 \
     --folder=step"$step" \
     --export-environment "$variant"/postman/environment.json \
