@@ -41,7 +41,12 @@ step() {
 
   kubectl scale deployment "$deployment" -n "$namespace" --replicas "$replicas" 
 
-  sleep 10
+  echo "Checking gateway health..."
+    if ! curl -s --max-time 30 http://localhost:8080/actuator/health >/dev/null 2>&1; then
+      echo "Gateway is not responding, restarting..."
+      kubectl rollout restart deployment/gateway-service -n "$namespace"
+      sleep 5
+    fi
 
   newman run \
     --delay-request=100 \
