@@ -15,7 +15,7 @@ public class CircuitBreaker : ICircuitBreaker
 
     private readonly ILogger<CircuitBreaker> _logger;
     private readonly int _maxFailuresBeforeOpen = 5;
-    private readonly TimeSpan _openToHalfOpenTimeout = TimeSpan.FromSeconds(5);
+    private readonly TimeSpan _openToHalfOpenTimeout = TimeSpan.FromSeconds(10);
     
     public CircuitBreaker(ILogger<CircuitBreaker> logger)
     {
@@ -36,9 +36,9 @@ public class CircuitBreaker : ICircuitBreaker
             // либо возвращает fallback, либо, через время, пытаемся цепь замкнуть
             if (DateTime.UtcNow - LastFailureTime > _openToHalfOpenTimeout)
             {
-                State = CircuitState.HalfOpen;
                 _logger.LogBadCircuitBreakerInfo("Пора попробовать снова!");
                 _logger.CircuitBreakerStateChange(State, CircuitState.HalfOpen);
+                State = CircuitState.HalfOpen;
             }
             else
             {
@@ -82,8 +82,8 @@ public class CircuitBreaker : ICircuitBreaker
                 FailureTimes.Clear();
                 
                 _logger.LogBadCircuitBreakerInfo($"Слишком много ошибок... Размыкаем цепь.");
-                State = CircuitState.Open;
                 _logger.CircuitBreakerStateChange(State, CircuitState.Open);
+                State = CircuitState.Open;
             }
             
             if (fallback != null)
